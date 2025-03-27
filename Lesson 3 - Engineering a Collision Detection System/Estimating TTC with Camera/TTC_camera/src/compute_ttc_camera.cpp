@@ -8,6 +8,17 @@
 
 using namespace std;
 
+double calculateMedian(const std::vector<double>& distRatios) 
+{    
+    std::vector<double> sortedData = distRatios;
+    std::sort(sortedData.begin(), sortedData.end());
+    if (sortedData.size() % 2 != 0) { // Odd length
+        return sortedData[sortedData.size() / 2];
+    } else { // Even length
+        return (sortedData[sortedData.size() / 2 - 1] + sortedData[sortedData.size() / 2]) / 2.0;
+    }
+}
+
 // Purpose: Compute time-to-collision (TTC) based on keypoint correspondences in successive images
 // Notes: 
 // - please take a look at the main()-function first
@@ -54,13 +65,14 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
         return;
     }
 
+    
     // compute camera-based TTC from distance ratios
-    double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
+
+    double medianDistRatio = calculateMedian(distRatios);
 
     double dT = 1 / frameRate;
-    TTC = -dT / (1 - meanDistRatio);
-
-    // TODO: STUDENT TASK (replacement for meanDistRatio)
+    TTC = -dT / (1 - medianDistRatio);
+   
 }
 
 int main()
